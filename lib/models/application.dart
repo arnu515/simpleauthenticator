@@ -5,11 +5,10 @@ import 'package:otp/otp.dart';
 class Application {
   String id;
   String name;
-  String payload;
   String key;
   late String code;
 
-  Application(this.id, this.name, this.payload, this.key) {
+  Application(this.id, this.name, this.key) {
     refreshCode();
   }
 
@@ -69,15 +68,6 @@ class Application {
                       fontWeight: FontWeight.w500,
                       fontSize: 20.0
                     )
-                  ),
-                  Text(
-                    payload,
-                    style: const TextStyle(
-                      fontFamily: "Ubuntu",
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16.0,
-                      color: Colors.black87
-                    )
                   )
                 ],
               ),
@@ -108,9 +98,9 @@ class Application {
 
   static List<Application> fetchAll() {
     return [
-      Application("1", "name", "payload", "JBSWY3DPEHPK3PXP"),
-      Application("2", "name1", "payload1", "JBSWY3DPEHPK3PXP"),
-      Application("3", "name2", "payload2", "JBSWY3DPEHPK3PXP"),
+      Application("1", "name", "JBSWY3DPEHPK3PXP"),
+      Application("2", "name1", "JBSWY3DPEHPK3PXP"),
+      Application("3", "name2", "JBSWY3DPEHPK3PXP"),
     ];
   }
 }
