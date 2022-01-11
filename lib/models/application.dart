@@ -5,9 +5,10 @@ class Application {
   String id;
   String name;
   String payload;
+  String key;
   late String code;
 
-  Application(this.id, this.name, this.payload) {
+  Application(this.id, this.name, this.payload, this.key) {
     code = "123456";
   }
 
@@ -100,9 +101,9 @@ class Application {
 
   static List<Application> fetchAll() {
     return [
-      Application("1", "name", "payload"),
-      Application("2", "name1", "payload1"),
-      Application("3", "name2", "payload2"),
+      Application("1", "name", "payload", "a"),
+      Application("2", "name1", "payload1", "b"),
+      Application("3", "name2", "payload2", "c"),
     ];
   }
 }
