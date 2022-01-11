@@ -19,7 +19,6 @@ class Application {
   }
 
   void delete(Function callback) {
-    print("Deleted $name");
     callback();
   }
 
