@@ -43,7 +43,7 @@ class HomeState extends State<Home> {
             )
           ) : const Padding(
             padding: EdgeInsets.all(padding * 2),
-            child: Text("You haven't added any applications.", style: TextStyle(fontSize: 18.0))
+            child: Text("You haven't added any applications.", style: TextStyle(fontSize: 20.0))
           )
         ]
       ),
