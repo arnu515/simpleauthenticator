@@ -36,11 +36,14 @@ class HomeState extends State<Home> {
             padding: EdgeInsets.fromLTRB(padding, padding / 2, padding, padding / 2),
             child: Text("Tap to copy, long-press to delete", style: TextStyle(color: Colors.black54))
           ),
-          Expanded(
+          apps.isNotEmpty ? Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(padding, padding, padding, padding),
               children: apps.map((app) => app.display(context, onDelete: _deleteApp)).toList(),
             )
+          ) : const Padding(
+            padding: EdgeInsets.all(padding * 2),
+            child: Text("You haven't added any applications.", style: TextStyle(fontSize: 18.0))
           )
         ]
       ),
