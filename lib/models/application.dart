@@ -101,9 +101,9 @@ class Application {
 
   static List<Application> fetchAll() {
     return [
-      Application("1", "name", "payload", "a"),
-      Application("2", "name1", "payload1", "b"),
-      Application("3", "name2", "payload2", "c"),
+      Application("1", "name", "payload", "JBSWY3DPEHPK3PXP"),
+      Application("2", "name1", "payload1", "JBSWY3DPEHPK3PXP"),
+      Application("3", "name2", "payload2", "JBSWY3DPEHPK3PXP"),
     ];
   }
 }
