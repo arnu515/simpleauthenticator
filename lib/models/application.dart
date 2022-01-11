@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Application {
+  String id;
   String name;
   String payload;
   late String code;
 
-  Application(this.name, this.payload) {
+  Application(this.id, this.name, this.payload) {
     code = "123456";
   }
 
@@ -15,14 +16,19 @@ class Application {
     callback();
   }
 
-  Widget display(BuildContext context) {
+  Widget display(BuildContext context, {void Function(String)? onDelete}) {
     deleteConfirmation() {
+      deleteApp() {
+        if (onDelete != null) onDelete(id);
+        Navigator.of(context).pop();
+      }
+
       AlertDialog alert = AlertDialog(
         title: const Text("Are you sure?"),
         content: Text("Are you sure you want to delete $name?"),
         actions: [
           TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Cancel")),
-          TextButton(onPressed: () => delete(() => Navigator.of(context).pop()), child: const Text("Delete", style: TextStyle(color: Colors.red)))
+          TextButton(onPressed: deleteApp, child: const Text("Delete", style: TextStyle(color: Colors.red)))
         ]
       );
 
@@ -94,9 +100,9 @@ class Application {
 
   static List<Application> fetchAll() {
     return [
-      Application("name", "payload"),
-      Application("name1", "payload1"),
-      Application("name2", "payload2"),
+      Application("1", "name", "payload"),
+      Application("2", "name1", "payload1"),
+      Application("3", "name2", "payload2"),
     ];
   }
 }
