@@ -1,28 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:otp/otp.dart';
 
 class Application {
+  String id;
   String name;
-  String payload;
+  String key;
   late String code;
 
-  Application(this.name, this.payload) {
-    code = "123456";
+  Application(this.id, this.name, this.key) {
+    refreshCode();
+  }
+
+  String refreshCode() {
+    String code = OTP.generateTOTPCodeString(key, DateTime.now().millisecondsSinceEpoch, isGoogle: true, algorithm: Algorithm.SHA1);
+    this.code = code;
+    return code;
   }
 
   void delete(Function callback) {
-    print("Deleted $name");
     callback();
   }
 
-  Widget display(BuildContext context) {
+  Widget display(BuildContext context, {void Function(String)? onDelete}) {
     deleteConfirmation() {
+      deleteApp() {
+        if (onDelete != null) onDelete(id);
+        Navigator.of(context).pop();
+      }
+
       AlertDialog alert = AlertDialog(
         title: const Text("Are you sure?"),
         content: Text("Are you sure you want to delete $name?"),
         actions: [
           TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Cancel")),
-          TextButton(onPressed: () => delete(() => Navigator.of(context).pop()), child: const Text("Delete", style: TextStyle(color: Colors.red)))
+          TextButton(onPressed: deleteApp, child: const Text("Delete", style: TextStyle(color: Colors.red)))
         ]
       );
 
@@ -55,15 +67,6 @@ class Application {
                       fontWeight: FontWeight.w500,
                       fontSize: 20.0
                     )
-                  ),
-                  Text(
-                    payload,
-                    style: const TextStyle(
-                      fontFamily: "Ubuntu",
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16.0,
-                      color: Colors.black87
-                    )
                   )
                 ],
               ),
@@ -94,9 +97,9 @@ class Application {
 
   static List<Application> fetchAll() {
     return [
-      Application("name", "payload"),
-      Application("name1", "payload1"),
-      Application("name2", "payload2"),
+      Application("1", "name", "JBSWY3DPEHPK3PXP"),
+      Application("2", "name1", "JBSWY3DPEHPK3PXP"),
+      Application("3", "name2", "JBSWY3DPEHPK3PXP"),
     ];
   }
 }
