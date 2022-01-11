@@ -65,7 +65,7 @@ class HomeState extends State<Home> {
                     _addAppFormKey.currentState!.save();
                     if (enteredKey == null || enteredName == null) return;
                     setState(() {
-                      apps.add(Application("3", enteredName!, enteredKey!));
+                      apps.add(Application(DateTime.now().millisecondsSinceEpoch.toString(), enteredName!, enteredKey!));
                     });
                     Navigator.pop(context);
                   }, child: const Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: Text("Add application", style: TextStyle(fontSize: 18.0))))
