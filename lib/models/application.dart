@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:otp/otp.dart';
 
 class Application {
   String id;
@@ -9,7 +10,13 @@ class Application {
   late String code;
 
   Application(this.id, this.name, this.payload, this.key) {
-    code = "123456";
+    refreshCode();
+  }
+
+  String refreshCode() {
+    String code = OTP.generateTOTPCodeString(key, DateTime.now().millisecondsSinceEpoch, isGoogle: true, algorithm: Algorithm.SHA1);
+    this.code = code;
+    return code;
   }
 
   void delete(Function callback) {
