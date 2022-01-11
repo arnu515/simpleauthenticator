@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import "package:flutter/material.dart";
 import 'package:flutter/rendering.dart';
 import 'package:simpleauthenticator/models/application.dart';
@@ -12,6 +14,26 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> {
   List<Application> apps = Application.fetchAll();
   final GlobalKey<FormState> _addAppFormKey = GlobalKey<FormState>();
+  Timer? updateCodeTimer;
+
+  refreshCodes(Timer timer) {
+    for (var app in apps) {app.refreshCode();}
+    setState(() {
+      apps = apps;
+    });
+  }
+
+  @override
+  initState() {
+    super.initState();
+    updateCodeTimer = Timer.periodic(const Duration(seconds: 5), refreshCodes);
+  }
+
+  @override
+  deactivate() {
+    if (updateCodeTimer != null) updateCodeTimer!.cancel();
+    super.deactivate();
+  }
   
   _deleteApp(String id) {
     setState(() {
