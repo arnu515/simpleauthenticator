@@ -15,7 +15,6 @@ class ScanQR extends StatefulWidget {
 class _ScanQRState extends State<ScanQR> {
   final qrViewKey = GlobalKey(debugLabel: "QR");
   QRViewController? qrController;
-  Barcode? qrCode;
 
   @override
   void reassemble() async {
@@ -35,12 +34,6 @@ class _ScanQRState extends State<ScanQR> {
 
   @override
   Widget build(BuildContext context) {
-    if (qrCode != null) {
-      print("qr found");
-      qrController!.stopCamera();
-      if (widget.onQrCode != null) widget.onQrCode!(qrCode!);
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Scan QR Code"),
@@ -56,7 +49,12 @@ class _ScanQRState extends State<ScanQR> {
             qrController = controller;
           });
 
-          controller.scannedDataStream.listen((barcode) => setState(() => qrCode = barcode));
+          controller.scannedDataStream.first.then((barcode) {
+            if (widget.onQrCode != null) widget.onQrCode!(barcode);
+            Future.delayed(Duration.zero, () {
+              Navigator.of(context).pop();
+            });
+          });
         },
         overlay: QrScannerOverlayShape(
           cutOutSize: MediaQuery.of(context).size.width * 0.8,
