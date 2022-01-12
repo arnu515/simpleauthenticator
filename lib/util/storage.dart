@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 typedef _FileContentType = Map<String, dynamic>;
 
 class Storage {
-  static const String fileName = "storage.json";
+  static const String fileName = "simpleauthenticator-storage.json";
   static const _FileContentType initData = {"apps": []};
   
   static Future<File> createFile({force = false}) async {
