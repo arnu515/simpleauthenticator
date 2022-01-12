@@ -131,6 +131,8 @@ class HomeState extends State<Home> {
                     if (enteredKey == null || enteredName == null) return;
                     setState(() {
                       apps.add(Application(DateTime.now().millisecondsSinceEpoch.toString(), enteredName!, enteredKey!));
+                      content["apps"] = apps;
+                      Storage.setContent(content);
                     });
                     Navigator.pop(context);
                   }, child: const Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: Text("Add application", style: TextStyle(fontSize: 18.0))))
