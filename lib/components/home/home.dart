@@ -80,7 +80,7 @@ class HomeState extends State<Home> {
     setState(() {
       apps.removeWhere((app) => app.id == id);
       apps = apps;
-      content["apps"] = apps;
+      content["apps"] = apps.map((app) => app.toMap()).toList();
       Storage.setContent(content);
     });
   }
@@ -131,7 +131,7 @@ class HomeState extends State<Home> {
                     if (enteredKey == null || enteredName == null) return;
                     setState(() {
                       apps.add(Application(DateTime.now().millisecondsSinceEpoch.toString(), enteredName!, enteredKey!));
-                      content["apps"] = apps;
+                      content["apps"] = apps.map((app) => app.toMap()).toList();
                       Storage.setContent(content);
                     });
                     Navigator.pop(context);
