@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import "package:flutter/material.dart";
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:simpleauthenticator/components/home/addappmodal.dart';
 import 'package:simpleauthenticator/models/application.dart';
 import 'package:simpleauthenticator/util/storage.dart';
-import 'package:simpleauthenticator/components/scanqr/scanqr.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -15,7 +14,6 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   List<Application> apps = [];
-  final GlobalKey<FormState> _addAppFormKey = GlobalKey<FormState>();
   Timer? updateCodeTimer;
   Map<String, dynamic> content = Storage.initData;
 
@@ -87,93 +85,13 @@ class HomeState extends State<Home> {
     });
   }
 
-  Widget createAddModal(BuildContext context) {
-    void _gotQrCode(Barcode qrCode, BuildContext scanQrCodeWidgetContext) {
-      print("Scanned: ${qrCode.code}");
-      Navigator.of(scanQrCodeWidgetContext).pop();
-    }
-
-    String? enteredName, enteredKey;
-
-    return Padding(
-      padding: MediaQuery.of(context).viewInsets,
-      child: SizedBox(
-        height: 350,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Add application", style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
-              Form(
-                key: _addAppFormKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(padding: EdgeInsets.all(12.0)),
-                    const Text("Name", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500)),
-                    const Padding(padding: EdgeInsets.all(2.0)),
-                    TextFormField(
-                      onSaved: (String? value) => enteredName = value,
-                      decoration: const InputDecoration(hintText: "Enter the application's name"),
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) return "Enter a value";
-                        return null;
-                      }
-                    ),
-                    const Padding(padding: EdgeInsets.all(4.0)),
-                    const Text("App key", style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500)),
-                    TextFormField(
-                      onSaved: (String? value) => enteredKey = value,
-                      decoration: const InputDecoration(hintText: "Enter TOTP Key"),
-                      validator: (String? value) {
-                        if (value == null || value.isEmpty) return "Enter a value";
-                        return null;
-                      }
-                    ),
-                    const Padding(padding: EdgeInsets.all(4.0)),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            if (!_addAppFormKey.currentState!.validate()) return;
-                            _addAppFormKey.currentState!.save();
-                            if (enteredKey == null || enteredName == null) return;
-                            setState(() {
-                              apps.add(Application(DateTime.now().millisecondsSinceEpoch.toString(), enteredName!, enteredKey!));
-                              content["apps"] = apps.map((app) => app.toMap()).toList();
-                              Storage.setContent(content);
-                            });
-                            Navigator.pop(context);
-                          }, 
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0), 
-                            child: Text("Add application", style: TextStyle(fontSize: 18.0))
-                          )
-                        ),
-                        const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0)),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ScanQR(onQrCode: (q) => _gotQrCode(q, context))));
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text("Scan QR Code", style: TextStyle(fontSize: 18.0, color: Colors.indigo))
-                          ),
-                          style: ElevatedButton.styleFrom(primary: Colors.white)
-                        )
-                      ],
-                    )
-                  ]
-                )
-              )
-            ]
-          )
-        )
-      )
-    );
+  _addApp(Application app) {
+    setState(() {
+      apps.add(app);
+      apps = apps;
+      content["apps"] = apps.map((app) => app.toMap()).toList();
+      Storage.setContent(content);
+    });
   }
 
   @override
@@ -208,7 +126,7 @@ class HomeState extends State<Home> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () { 
-          showModalBottomSheet(context: context, builder: createAddModal, isScrollControlled: true);
+          showModalBottomSheet(context: context, builder: (BuildContext context) => AddAppModal(onAppAdded: _addApp), isScrollControlled: true);
         },
         tooltip: "Add application",
       ),
