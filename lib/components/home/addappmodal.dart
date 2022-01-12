@@ -16,12 +16,30 @@ class _AddAppModalState extends State<AddAppModal> {
   final GlobalKey<FormState> _addAppFormKey = GlobalKey<FormState>();
   final enteredNameController = TextEditingController();
   final enteredKeyController = TextEditingController();
+  String qrCodeError = "";
 
   @override
   Widget build(BuildContext context) {
     void _gotQrCode(Barcode qrCode, BuildContext scanQrCodeWidgetContext) {
-      print("Scanned: ${qrCode.code}");
-      Navigator.of(scanQrCodeWidgetContext).pop();
+      print(qrCode.code);
+      var uri = Uri.tryParse(qrCode.code);
+      if (!(uri?.isAbsolute ?? false)) {
+        setState(() => qrCodeError = "Invalid QR Code. This QR Code is not a URL");
+        return;
+      }
+      if (!uri!.scheme.startsWith("otpauth")) {
+        setState(() => qrCodeError = 'Invalid QR Code. URL Scheme should be with "otpauth". This QR Code\'s scheme is ${uri.scheme}');
+        return;
+      }
+      var appName = uri.path.replaceFirst("/", "");
+      var key = uri.queryParameters["secret"] ?? uri.queryParameters["key"];
+      if (key == null || key.isEmpty) {
+        setState(() => qrCodeError = 'Invalid QR Code. Key was not found in query string');
+        return;
+      }
+      setState(() => qrCodeError = '');
+      enteredNameController.text = appName;
+      enteredKeyController.text = key;
     }
 
     return Padding(
@@ -91,7 +109,9 @@ class _AddAppModalState extends State<AddAppModal> {
                           style: ElevatedButton.styleFrom(primary: Colors.white)
                         )
                       ],
-                    )
+                    ),
+                    const Padding(padding: EdgeInsets.all(4.0)),
+                    qrCodeError.isNotEmpty ? Text(qrCodeError, style: const TextStyle(color: Colors.red, fontSize: 16.0)) : const Text("")
                   ]
                 )
               )
