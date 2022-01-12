@@ -94,12 +94,4 @@ class Application {
       )
     );
   }
-
-  static List<Application> fetchAll() {
-    return [
-      Application("1", "name", "JBSWY3DPEHPK3PXP"),
-      Application("2", "name1", "JBSWY3DPEHPK3PXP"),
-      Application("3", "name2", "JBSWY3DPEHPK3PXP"),
-    ];
-  }
 }
