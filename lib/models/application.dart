@@ -12,6 +12,14 @@ class Application {
     refreshCode();
   }
 
+  Map<String, String> toMap() {
+    return {
+      "id": id,
+      "name": name,
+      "key": key
+    };
+  }
+
   String refreshCode() {
     String code = OTP.generateTOTPCodeString(key, DateTime.now().millisecondsSinceEpoch, isGoogle: true, algorithm: Algorithm.SHA1);
     this.code = code;
