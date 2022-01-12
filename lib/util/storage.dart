@@ -1,3 +1,5 @@
+// TODO: Encrypt this data before storing.
+
 import 'dart:io';
 import 'dart:convert';
 
