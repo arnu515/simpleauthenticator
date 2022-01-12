@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import "package:flutter/material.dart";
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:simpleauthenticator/models/application.dart';
 import 'package:simpleauthenticator/util/storage.dart';
+import 'package:simpleauthenticator/components/scanqr/scanqr.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -75,7 +77,7 @@ class HomeState extends State<Home> {
     if (updateCodeTimer != null) updateCodeTimer!.cancel();
     super.deactivate();
   }
-  
+
   _deleteApp(String id) {
     setState(() {
       apps.removeWhere((app) => app.id == id);
@@ -86,6 +88,11 @@ class HomeState extends State<Home> {
   }
 
   Widget createAddModal(BuildContext context) {
+    void _gotQrCode(Barcode qrCode, BuildContext scanQrCodeWidgetContext) {
+      print("Scanned: ${qrCode.code}");
+      Navigator.of(scanQrCodeWidgetContext).pop();
+    }
+
     String? enteredName, enteredKey;
 
     return Padding(
@@ -127,17 +134,38 @@ class HomeState extends State<Home> {
                       }
                     ),
                     const Padding(padding: EdgeInsets.all(4.0)),
-                    ElevatedButton(onPressed: () {
-                      if (!_addAppFormKey.currentState!.validate()) return;
-                      _addAppFormKey.currentState!.save();
-                      if (enteredKey == null || enteredName == null) return;
-                      setState(() {
-                        apps.add(Application(DateTime.now().millisecondsSinceEpoch.toString(), enteredName!, enteredKey!));
-                        content["apps"] = apps.map((app) => app.toMap()).toList();
-                        Storage.setContent(content);
-                      });
-                      Navigator.pop(context);
-                    }, child: const Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: Text("Add application", style: TextStyle(fontSize: 18.0))))
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            if (!_addAppFormKey.currentState!.validate()) return;
+                            _addAppFormKey.currentState!.save();
+                            if (enteredKey == null || enteredName == null) return;
+                            setState(() {
+                              apps.add(Application(DateTime.now().millisecondsSinceEpoch.toString(), enteredName!, enteredKey!));
+                              content["apps"] = apps.map((app) => app.toMap()).toList();
+                              Storage.setContent(content);
+                            });
+                            Navigator.pop(context);
+                          }, 
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0), 
+                            child: Text("Add application", style: TextStyle(fontSize: 18.0))
+                          )
+                        ),
+                        const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0)),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ScanQR(onQrCode: (q) => _gotQrCode(q, context))));
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text("Scan QR Code", style: TextStyle(fontSize: 18.0, color: Colors.indigo))
+                          ),
+                          style: ElevatedButton.styleFrom(primary: Colors.white)
+                        )
+                      ],
+                    )
                   ]
                 )
               )
