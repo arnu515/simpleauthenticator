@@ -2,6 +2,7 @@ import 'dart:async';
 
 import "package:flutter/material.dart";
 import 'package:simpleauthenticator/models/application.dart';
+import 'package:simpleauthenticator/util/storage.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -11,9 +12,10 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  List<Application> apps = Application.fetchAll();
+  List<Application> apps = [];
   final GlobalKey<FormState> _addAppFormKey = GlobalKey<FormState>();
   Timer? updateCodeTimer;
+  Map<String, dynamic> content = Storage.initData;
 
   refreshCodes(Timer timer) {
     for (var app in apps) {app.refreshCode();}
@@ -22,10 +24,50 @@ class HomeState extends State<Home> {
     });
   }
 
+  _loadAppsFromStorage() async {
+    var content = await Storage.getContent();
+    print("[home.dart 1] loaded content");
+    print(content);
+
+    print("[home.dart 2] setting apps");
+    if (content["apps"] is! List) {
+      content["apps"] = [];
+      await Storage.setContent(content);
+    }
+    var appsList = (content["apps"] as List<dynamic>);
+    List<Application> apps = [];
+    for (int i = 0; i < appsList.length; i++) {
+      if (appsList[i] is! Map<String, dynamic>) {
+        appsList.removeAt(i);
+        content["apps"] = appsList;
+        await Storage.setContent(content);
+      } else {
+        Map<String, dynamic> app = appsList[i];
+        String? id = app["id"];
+        String? name = app["name"];
+        String? key = app["key"];
+        if (id == null || name == null || key == null) {
+          appsList.removeAt(i);
+          content["apps"] = appsList;
+          await Storage.setContent(content);
+        } else {
+          print("[home.dart 3] adding application: Application(id: $id, name: $name, key: $key)");
+          var application = Application(id, name, key);
+          apps.add(application);
+        }
+      }
+    }
+    setState(() {
+      this.apps = apps;
+      this.content = content;
+    });
+  }
+
   @override
   initState() {
     super.initState();
     updateCodeTimer = Timer.periodic(const Duration(seconds: 5), refreshCodes);
+    _loadAppsFromStorage();
   }
 
   @override
