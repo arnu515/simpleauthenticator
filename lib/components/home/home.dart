@@ -80,6 +80,8 @@ class HomeState extends State<Home> {
     setState(() {
       apps.removeWhere((app) => app.id == id);
       apps = apps;
+      content["apps"] = apps;
+      Storage.setContent(content);
     });
   }
 
