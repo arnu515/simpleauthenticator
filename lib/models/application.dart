@@ -12,6 +12,14 @@ class Application {
     refreshCode();
   }
 
+  Map<String, String> toMap() {
+    return {
+      "id": id,
+      "name": name,
+      "key": key
+    };
+  }
+
   String refreshCode() {
     String code = OTP.generateTOTPCodeString(key, DateTime.now().millisecondsSinceEpoch, isGoogle: true, algorithm: Algorithm.SHA1);
     this.code = code;
@@ -93,13 +101,5 @@ class Application {
         )
       )
     );
-  }
-
-  static List<Application> fetchAll() {
-    return [
-      Application("1", "name", "JBSWY3DPEHPK3PXP"),
-      Application("2", "name1", "JBSWY3DPEHPK3PXP"),
-      Application("3", "name2", "JBSWY3DPEHPK3PXP"),
-    ];
   }
 }
