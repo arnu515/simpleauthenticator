@@ -39,7 +39,7 @@ class _UpdateAppModalState extends State<UpdateAppModal> {
         return;
       }
       if (!uri!.scheme.startsWith("otpauth")) {
-        setState(() => qrCodeError = 'Invalid QR Code. URL Scheme should be with "otpauth". This QR Code\'s scheme is ${uri.scheme}');
+        setState(() => qrCodeError = 'Invalid QR Code. URL Scheme should be "otpauth". This QR Code\'s scheme is ${uri.scheme}');
         return;
       }
       var appName = uri.path.replaceFirst("/", "");
