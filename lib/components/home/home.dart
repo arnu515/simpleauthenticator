@@ -74,8 +74,21 @@ class HomeState extends State<Home> {
     var token = prefs.getString("token");
     if (token != null) {
       setState(() {
-      this.token = token;
-    });
+        this.token = token;
+      });
+      if (apps.isEmpty) {
+        // check cloud if there's a backup
+        var content = await CloudStorage.getJson(token);
+        print("Content: $content");
+        if (content != null) {
+          // found backup, store this locally.
+          await Storage.setContent(content);
+          await _loadAppsFromStorage();
+          setState(() {
+            this.content = content;
+          });
+        }
+      }
     }
   }
 
@@ -104,7 +117,9 @@ class HomeState extends State<Home> {
           }
         }).toList();
         content["apps"] = apps.map((app) => app.toMap()).toList();
-        Storage.setContent(content);
+        Storage.setContent(content).then((x) {
+          if (token != null) CloudStorage.setJson(token!);
+        });
       });
     }
 
@@ -115,7 +130,9 @@ class HomeState extends State<Home> {
           apps.removeWhere((x) => x.id == app.id);
           apps = apps;
           content["apps"] = apps.map((app) => app.toMap()).toList();
-          Storage.setContent(content);
+          Storage.setContent(content).then((x) {
+            if (token != null) CloudStorage.setJson(token!);
+          });
         });
       }
 
@@ -139,7 +156,9 @@ class HomeState extends State<Home> {
       apps.add(app);
       apps = apps;
       content["apps"] = apps.map((app) => app.toMap()).toList();
-      Storage.setContent(content);
+      Storage.setContent(content).then((x) {
+        if (token != null) CloudStorage.setJson(token!);
+      });
     });
   }
 
