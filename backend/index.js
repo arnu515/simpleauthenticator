@@ -8,6 +8,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const authRouter = require("./routes/auth");
+app.use("/auth", authRouter);
+
 app.get("/", (_, res) => res.send("Hello, world!"));
 
 const port = process.env.PORT || 5000;
