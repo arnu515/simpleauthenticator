@@ -77,7 +77,7 @@ router.get("/me", getUser, (req, res) =>
 
 router.delete("/logout", getUser, async (req, res) => {
   await blacklistToken(req.token);
-  return res.status(204).end();
+  return res.status(200).json({message: "Logged out", ok: true});
 });
 
 module.exports = router;
