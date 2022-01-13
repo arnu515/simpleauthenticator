@@ -1,0 +1,31 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "gen:schema": "prisma generate",
+    "gen:db": "prisma db push --skip-generate",
+    "prisma": "prisma",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.8.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "joi": "^17.5.0",
+    "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.7",
+    "@types/node": "^17.0.8",
+    "nodemon": "^2.0.15",
+    "prisma": "^3.8.0"
+  }
+}
