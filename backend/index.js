@@ -11,6 +11,9 @@ app.use(cors());
 const authRouter = require("./routes/auth");
 app.use("/auth", authRouter);
 
+const storeRouter = require("./routes/store");
+app.use("/store", storeRouter);
+
 app.get("/", (_, res) => res.send("Hello, world!"));
 
 const port = process.env.PORT || 5000;
