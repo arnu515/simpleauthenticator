@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:simpleauthenticator/components/scanqr/scanqr.dart';
@@ -81,7 +83,7 @@ class _AddAppModalState extends State<AddAppModal> {
                       }
                     ),
                     const Padding(padding: EdgeInsets.all(4.0)),
-                    Row(
+                    Wrap(
                       children: [
                         ElevatedButton(
                           onPressed: () {
@@ -97,8 +99,8 @@ class _AddAppModalState extends State<AddAppModal> {
                             child: Text("Add application", style: TextStyle(fontSize: 18.0))
                           )
                         ),
-                        const Padding(padding: EdgeInsets.symmetric(horizontal: 4.0)),
-                        ElevatedButton(
+                        const Padding(padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0)),
+                        if (Platform.isAndroid || Platform.isIOS) ElevatedButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ScanQR(onQrCode: (q) => _gotQrCode(q, context))));
                           },
