@@ -12,9 +12,10 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(dbgenerated()) @map("_id") @db.ObjectId
-  email    String
-  password String
+  id          String        @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  email       String
+  password    String
+  UserStorage UserStorage[]
 
   @@map("users")
 }
@@ -24,4 +25,14 @@ model JWTToken {
   token String @unique
 
   @@map("tokens")
+}
+
+model UserStorage {
+  id      String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  iv      String
+  content String
+  userId  String @unique
+  User    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_storage")
 }
