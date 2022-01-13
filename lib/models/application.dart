@@ -30,32 +30,16 @@ class Application {
     callback();
   }
 
-  Widget display(BuildContext context, {void Function(String)? onDelete}) {
-    deleteConfirmation() {
-      deleteApp() {
-        if (onDelete != null) onDelete(id);
-        Navigator.of(context).pop();
-      }
-
-      AlertDialog alert = AlertDialog(
-        title: const Text("Are you sure?"),
-        content: Text("Are you sure you want to delete $name?"),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Cancel")),
-          TextButton(onPressed: deleteApp, child: const Text("Delete", style: TextStyle(color: Colors.red)))
-        ]
-      );
-
-      showDialog(context: context, builder: (BuildContext context) => alert);
-    }
-
+  Widget display(BuildContext context, {void Function(String)? onEdit}) {
     return GestureDetector(
       onTap: () {
         Clipboard.setData(ClipboardData(text: code)).then((_){
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Code $code copied to the clipboard')));
         });
       },
-      onLongPress: deleteConfirmation,
+      onLongPress: () {
+        if (onEdit != null) onEdit(id);
+      },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
         child: Container(

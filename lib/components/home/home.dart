@@ -2,6 +2,7 @@ import 'dart:async';
 
 import "package:flutter/material.dart";
 import 'package:simpleauthenticator/components/home/addappmodal.dart';
+import 'package:simpleauthenticator/components/home/updateappmodal.dart';
 import 'package:simpleauthenticator/models/application.dart';
 import 'package:simpleauthenticator/util/storage.dart';
 
@@ -76,13 +77,45 @@ class HomeState extends State<Home> {
     super.deactivate();
   }
 
-  _deleteApp(String id) {
-    setState(() {
-      apps.removeWhere((app) => app.id == id);
-      apps = apps;
-      content["apps"] = apps.map((app) => app.toMap()).toList();
-      Storage.setContent(content);
-    });
+  _editApp(String id) {
+    onAppUpdated(Application app) {
+      setState(() {
+        apps = apps.map((x) {
+          if (x.id == app.id) {
+            return app;
+          } else {
+            return x;
+          }
+        }).toList();
+        content["apps"] = apps.map((app) => app.toMap()).toList();
+        Storage.setContent(content);
+      });
+    }
+
+    onAppDeleted(Application app) {
+      deleteApp() {
+        Navigator.of(context).pop();
+        setState(() {
+          apps.removeWhere((x) => x.id == app.id);
+          apps = apps;
+          content["apps"] = apps.map((app) => app.toMap()).toList();
+          Storage.setContent(content);
+        });
+      }
+
+      AlertDialog alert = AlertDialog(
+          title: const Text("Are you sure?"),
+          content: Text("Are you sure you want to delete ${app.name}?"),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("Cancel")),
+            TextButton(onPressed: deleteApp, child: const Text("Delete", style: TextStyle(color: Colors.red)))
+          ]
+      );
+
+      showDialog(context: context, builder: (BuildContext context) => alert);
+    }
+
+    showModalBottomSheet(context: context, builder: (BuildContext context) => UpdateAppModal(app: apps.firstWhere((x) => x.id == id, orElse: () => Application(id, "", "")), onAppUpdated: onAppUpdated, onAppDeleted: onAppDeleted), isScrollControlled: true);
   }
 
   _addApp(Application app) {
@@ -115,7 +148,7 @@ class HomeState extends State<Home> {
           apps.isNotEmpty ? Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(padding, padding, padding, padding),
-              children: apps.map((app) => app.display(context, onDelete: _deleteApp)).toList(),
+              children: apps.map((app) => app.display(context, onEdit: _editApp)).toList(),
             )
           ) : const Padding(
             padding: EdgeInsets.all(padding * 2),
