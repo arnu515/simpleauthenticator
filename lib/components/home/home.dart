@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import "package:flutter/material.dart";
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simpleauthenticator/components/auth/auth.dart';
 import 'package:simpleauthenticator/components/home/addappmodal.dart';
 import 'package:simpleauthenticator/components/home/updateappmodal.dart';
 import 'package:simpleauthenticator/models/application.dart';
@@ -17,6 +21,7 @@ class HomeState extends State<Home> {
   List<Application> apps = [];
   Timer? updateCodeTimer;
   Map<String, dynamic> content = Storage.initData;
+  String? token;
 
   refreshCodes(Timer timer) {
     for (var app in apps) {app.refreshCode();}
@@ -64,11 +69,22 @@ class HomeState extends State<Home> {
     });
   }
 
+  _getAuthState() async {
+    var prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString("token");
+    if (token != null) {
+      setState(() {
+      this.token = token;
+    });
+    }
+  }
+
   @override
   initState() {
     super.initState();
     updateCodeTimer = Timer.periodic(const Duration(seconds: 5), refreshCodes);
     _loadAppsFromStorage();
+    _getAuthState();
   }
 
   @override
@@ -127,6 +143,21 @@ class HomeState extends State<Home> {
     });
   }
 
+  _logout() async {
+    print(token);
+    const baseUrl = String.fromEnvironment("API_URL", defaultValue: "http://localhost:5000") + "/auth";
+    if (token == null) return;
+    var res = await http.delete(Uri.parse('$baseUrl/logout'), headers: {"Authorization": "Bearer $token"});
+    print(res.body);
+    var data = json.decode(res.body);
+    print(data);
+    var prefs = await SharedPreferences.getInstance();
+    prefs.remove("token");
+    setState(() {
+      token = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     const padding = 12.0;
@@ -138,6 +169,28 @@ class HomeState extends State<Home> {
           fontWeight: FontWeight.bold,
           fontSize: 24.0
         ),
+        actions: [
+          token == null ? IconButton(
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context) => Auth(onLogin: (token) {
+                setState(() {
+                  this.token = token;
+                });
+              })));
+            },
+            icon: const Icon(Icons.person),
+            tooltip: "Login / Register"
+          ) : IconButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text("Are you sure?"),
+                action: SnackBarAction(label: "Logout", textColor: Colors.red, onPressed: _logout),
+              ));
+            },
+            icon: const Icon(Icons.exit_to_app),
+            tooltip: "Logout"
+          )
+        ],
       ),
       body: Column(
         children: [
