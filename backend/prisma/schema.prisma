@@ -20,7 +20,8 @@ model User {
 }
 
 model JWTToken {
-  token String @id @map("_id")
+  id    String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  token String
 
   @@map("tokens")
 }
