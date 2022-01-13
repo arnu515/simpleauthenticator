@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 typedef _FileContentType = Map<String, dynamic>;
@@ -70,5 +71,27 @@ class Storage {
         rethrow;
       }
     }
+  }
+}
+
+class CloudStorage {
+  static const baseUrl = String.fromEnvironment("API_URL", defaultValue: "http://localhost:5000") + "/store";
+
+  static Future<void> setJson(String token) async {
+    var content = await Storage.getContent();
+    var res = await http.post(Uri.parse(baseUrl), body: json.encode(content), headers: {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json"
+    });
+    var data = json.decode(res.body);
+    print(data);
+  }
+
+  static Future<_FileContentType?> getJson(String token) async {
+    var res = await http.get(Uri.parse(baseUrl), headers: {"Authorization": "Bearer $token"});
+    var data = json.decode(res.body);
+    print(data);
+    if (res.statusCode == 404) return null;
+    return data["data"];
   }
 }
