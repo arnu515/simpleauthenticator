@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String        @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  email       String
+  password    String
+  UserStorage UserStorage[]
+
+  @@map("users")
+}
+
+model JWTToken {
+  id    String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  token String @unique
+
+  @@map("tokens")
+}
+
+model UserStorage {
+  id      String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  iv      String
+  content String
+  userId  String @unique
+  User    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_storage")
+}

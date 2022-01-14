@@ -5,20 +5,29 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:simpleauthenticator/components/scanqr/scanqr.dart';
 import 'package:simpleauthenticator/models/application.dart';
 
-class AddAppModal extends StatefulWidget {
-  final Function(Application)? onAppAdded;
+class UpdateAppModal extends StatefulWidget {
+  final Function(Application)? onAppUpdated;
+  final Function(Application)? onAppDeleted;
+  final Application app;
 
-  const AddAppModal({Key? key, this.onAppAdded}) : super(key: key);
+  const UpdateAppModal({Key? key, this.onAppUpdated, this.onAppDeleted, required this.app}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AddAppModalState();
+  State<StatefulWidget> createState() => _UpdateAppModalState();
 }
 
-class _AddAppModalState extends State<AddAppModal> {
+class _UpdateAppModalState extends State<UpdateAppModal> {
   final GlobalKey<FormState> _addAppFormKey = GlobalKey<FormState>();
   final enteredNameController = TextEditingController();
   final enteredKeyController = TextEditingController();
   String qrCodeError = "";
+
+  @override
+  void initState() {
+    super.initState();
+    enteredNameController.text = widget.app.name;
+    enteredKeyController.text = widget.app.key;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +39,7 @@ class _AddAppModalState extends State<AddAppModal> {
         return;
       }
       if (!uri!.scheme.startsWith("otpauth")) {
-        setState(() => qrCodeError = 'Invalid QR Code. URL Scheme should be with "otpauth". This QR Code\'s scheme is ${uri.scheme}');
+        setState(() => qrCodeError = 'Invalid QR Code. URL Scheme should be "otpauth". This QR Code\'s scheme is ${uri.scheme}');
         return;
       }
       var appName = uri.path.replaceFirst("/", "");
@@ -54,7 +63,7 @@ class _AddAppModalState extends State<AddAppModal> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Add application", style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+              const Text("Update application", style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
               Form(
                 key: _addAppFormKey,
                 child: Column(
@@ -91,12 +100,12 @@ class _AddAppModalState extends State<AddAppModal> {
                             var enteredName = enteredNameController.text;
                             var enteredKey = enteredKeyController.text;
                             if (enteredKey.isEmpty || enteredName.isEmpty) return;
-                            if (widget.onAppAdded != null) widget.onAppAdded!(Application(DateTime.now().millisecondsSinceEpoch.toString(), enteredName, enteredKey));
+                            if (widget.onAppUpdated != null) widget.onAppUpdated!(Application(widget.app.id, enteredName, enteredKey));
                             Navigator.pop(context);
                           },
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text("Add application", style: TextStyle(fontSize: 18.0))
+                            child: Text("Update application", style: TextStyle(fontSize: 18.0))
                           )
                         ),
                         const Padding(padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0)),
@@ -109,6 +118,17 @@ class _AddAppModalState extends State<AddAppModal> {
                             child: Text("Scan QR Code", style: TextStyle(fontSize: 18.0, color: Colors.indigo))
                           ),
                           style: ElevatedButton.styleFrom(primary: Colors.white)
+                        ),
+                        const Padding(padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0)),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (widget.onAppDeleted != null) widget.onAppDeleted!(widget.app);
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text("Delete application", style: TextStyle(fontSize: 18.0, color: Colors.white))
+                          ),
+                          style: ElevatedButton.styleFrom(primary: Colors.red)
                         )
                       ],
                     ),

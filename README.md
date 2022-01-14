@@ -2,15 +2,14 @@
 
 Simple TOTP Authenticator
 
-## Getting Started
+## Download
 
-This project is a starting point for a Flutter application.
+Get the Android APK file from [Releases](https://github.com/arnu515/simpleauthenticator/releases).
 
-A few resources to get you started if this is your first Flutter project:
+You may get a play-protect warning, and that's because I haven't yet signed the application. This warning can be ignored.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+I will publish it soon on F-Droid and Play store.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Credits
+
+- Logo Icon: <a target="_blank" href="https://icons8.com/icon/40348/lock">Lock</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
