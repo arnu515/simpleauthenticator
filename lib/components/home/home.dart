@@ -215,7 +215,7 @@ class HomeState extends State<Home> {
         children: [
           const Padding(
             padding: EdgeInsets.fromLTRB(padding, padding / 2, padding, padding / 2),
-            child: Text("Tap to copy, long-press to delete", style: TextStyle(color: Colors.black54))
+            child: Text("Tap to copy, long-press to edit", style: TextStyle(color: Colors.black54))
           ),
           apps.isNotEmpty ? Expanded(
             child: ListView(
