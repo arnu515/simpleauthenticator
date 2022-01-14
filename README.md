@@ -6,6 +6,8 @@ Simple TOTP Authenticator
 
 Get the Android APK file from [Releases](https://github.com/arnu515/simpleauthenticator/releases).
 
+You may get a play-protect warning, and that's because I haven't yet signed the application. This warning can be ignored.
+
 I will publish it soon on F-Droid and Play store.
 
 ## Credits
