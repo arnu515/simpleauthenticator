@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
+// import 'dart:convert';
 
 import "package:flutter/material.dart";
 import 'package:http/http.dart' as http;
@@ -32,10 +32,10 @@ class HomeState extends State<Home> {
 
   _loadAppsFromStorage() async {
     var content = await Storage.getContent();
-    print("[home.dart 1] loaded content");
-    print(content);
+    // print("[home.dart 1] loaded content");
+    // print(content);
 
-    print("[home.dart 2] setting apps");
+    // print("[home.dart 2] setting apps");
     if (content["apps"] is! List) {
       content["apps"] = [];
       await Storage.setContent(content);
@@ -57,7 +57,7 @@ class HomeState extends State<Home> {
           content["apps"] = appsList;
           await Storage.setContent(content);
         } else {
-          print("[home.dart 3] adding application: Application(id: $id, name: $name, key: $key)");
+          // print("[home.dart 3] adding application: Application(id: $id, name: $name, key: $key)");
           var application = Application(id, name, key);
           apps.add(application);
         }
@@ -79,7 +79,7 @@ class HomeState extends State<Home> {
       if (apps.isEmpty) {
         // check cloud if there's a backup
         var content = await CloudStorage.getJson(token);
-        print("Content: $content");
+        // print("Content: $content");
         if (content != null) {
           // found backup, store this locally.
           await Storage.setContent(content);
@@ -163,13 +163,13 @@ class HomeState extends State<Home> {
   }
 
   _logout() async {
-    print(token);
+    // print(token);
     const baseUrl = String.fromEnvironment("API_URL", defaultValue: "http://localhost:5000") + "/auth";
     if (token == null) return;
-    var res = await http.delete(Uri.parse('$baseUrl/logout'), headers: {"Authorization": "Bearer $token"});
-    print(res.body);
-    var data = json.decode(res.body);
-    print(data);
+    /*var res = */await http.delete(Uri.parse('$baseUrl/logout'), headers: {"Authorization": "Bearer $token"});
+    // print(res.body);
+    // var data = json.decode(res.body);
+    // print(data);
     var prefs = await SharedPreferences.getInstance();
     prefs.remove("token");
     setState(() {

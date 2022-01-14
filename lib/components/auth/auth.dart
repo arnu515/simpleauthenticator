@@ -33,10 +33,10 @@ class _Auth extends State<Auth> {
 
     var body = {"email": email, "password": password};
     if (authType == "register") body["confirmPassword"] = cpassword;
-    print(body);
+    // print(body);
 
     var res = await http.post(Uri.parse('$baseUrl/$authType'), body: json.encode(body), headers: {"Content-Type": "application/json"});
-    print(res.body);
+    // print(res.body);
 
     var data = json.decode(res.body);
     if (!res.statusCode.toString().startsWith("2") || !data["ok"]) {

@@ -32,7 +32,7 @@ class _UpdateAppModalState extends State<UpdateAppModal> {
   @override
   Widget build(BuildContext context) {
     void _gotQrCode(Barcode qrCode, BuildContext scanQrCodeWidgetContext) {
-      print(qrCode.code);
+      // print(qrCode.code);
       var uri = Uri.tryParse(qrCode.code);
       if (!(uri?.isAbsolute ?? false)) {
         setState(() => qrCodeError = "Invalid QR Code. This QR Code is not a URL");
